@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import mysql.connector
+from process_files import get_dominant_colors
 
 app = Flask(__name__)
 CORS(app)
@@ -32,7 +33,8 @@ def upload_file():
 
         file_path = os.path.join(UPLOAD_FOLDER, file.filename)
         sql_query = "INSERT INTO properties (file_name, colors) VALUES (%s, %s)"
-        values = (str(file.filename), None)
+        colors = get_dominant_colors(file_path, k=3) #TODO: make k not constant
+        values = (str(file.filename), colors)
         cur.execute(sql_query, values)
         file.save(file_path)
         uploaded_files.append(file.filename)
