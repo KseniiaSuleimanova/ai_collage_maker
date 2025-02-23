@@ -26,17 +26,21 @@ def upload_file():
     cur = db.cursor()
 
     uploaded_files = []
+    color_count = int(request.form.get('colorCount', 1))
     for key in request.files:
+        if key == 'colorCount':
+            continue
         file = request.files[key]
         if file.filename == '':
             return jsonify({"error": f"One of the files is empty"}), 400
 
         file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+        file.save(file_path)
         sql_query = "INSERT INTO properties (file_name, colors) VALUES (%s, %s)"
-        colors = get_dominant_colors(file_path, k=3) #TODO: make k not constant
+        colors = get_dominant_colors(file_path, k=color_count)
         values = (str(file.filename), colors)
         cur.execute(sql_query, values)
-        file.save(file_path)
+
         uploaded_files.append(file.filename)
     db.commit()
     cur.close()
