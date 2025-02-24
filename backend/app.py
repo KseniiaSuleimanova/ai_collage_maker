@@ -57,8 +57,8 @@ def create_collage():
     image_count = int(request.form.get('imageCount', 1))
     colors = request.form.get('colors', 1).split(',')
     img_paths = fetch_filenames(target_colors=colors, n=image_count)
-    collage_creation(img_paths)
-    return jsonify({"message": "Collage created successfully"})
+    filename = collage_creation(img_paths)
+    return jsonify({"filename": filename})
 
 
 

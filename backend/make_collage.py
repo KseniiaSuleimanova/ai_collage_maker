@@ -1,7 +1,8 @@
 
 import cv2
 import numpy as np
-
+from datetime import datetime
+import os
 
 def collage_creation(image_paths):
     n = int(len(image_paths) ** 0.5)
@@ -21,4 +22,15 @@ def collage_creation(image_paths):
             collage[i:i + img_dim, j:j + img_dim] = images[cnt]
             cnt += 1
 
-    cv2.imwrite("collages/collage.jpg", collage)
+    static_folder = os.path.join(os.getcwd(), 'static')
+    if not os.path.exists(static_folder):
+        os.makedirs(static_folder)
+    name = ("collage_" +
+            datetime.now().strftime("%Y%m%d%H%M%S%f") + ".jpg")
+
+    filename = os.path.join(static_folder, name)
+    cv2.imwrite(filename, collage)
+    return name
+
+imgs = ['uploads/cuteTuring.png', 'uploads/apple jack.png', 'uploads/rainbow dash.png', 'uploads/fluttershy.jpg']
+collage_creation(imgs)
