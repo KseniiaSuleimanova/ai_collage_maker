@@ -4,6 +4,7 @@ from flask_cors import CORS
 import os
 import mysql.connector
 from process_files import get_dominant_colors
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -44,6 +45,7 @@ def upload_file():
         uploaded_files.append(file.filename)
     db.commit()
     cur.close()
+    db.close()
 
     return jsonify({"message": "Files uploaded successfully", "files": uploaded_files})
 
