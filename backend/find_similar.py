@@ -6,7 +6,6 @@ from make_collage import *
 
 
 def hex_to_rgb(hex_color):
-    # Convert hex to RGB
     hex_color = hex_color.lstrip('#')
     return tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
 
@@ -49,26 +48,31 @@ def get_database_colors():
 
 def find_similar_images(target_colors, n=1):
     ids, color_vectors = get_database_colors()
-
-    # Ensure target_colors is a 2D tensor with shape (1, 15) where 15 is the flattened color vector length
-    target_tensor = torch.tensor(target_colors, dtype=torch.float32).view(1, -1)  # Flatten and add batch dimension
-
-    # Flatten the color_vectors to match the target tensor shape
+    target_tensor = torch.tensor(target_colors, dtype=torch.float32).view(1, -1)
     color_vectors_flattened = color_vectors.view(color_vectors.size(0), -1)
-
-    # Calculate cosine similarity
     similarities = torch.nn.functional.cosine_similarity(color_vectors_flattened, target_tensor, dim=1)
-
-    # Get top n indices
     top_indices = torch.argsort(similarities, descending=True)[:n]
-
-    # Fetch the result ids
     result_ids = [ids[i] for i in top_indices]
 
     return result_ids
 
+def fix_target_colors(target_colors):
+    lst = target_colors[-1]
+    nd = 5 - len(target_colors)
+    for _ in range(nd):
+        target_colors.append(lst)
+    new_target = []
+    for i in target_colors:
+        r, g, b = hex_to_rgb(i)
+        new_target.append(r)
+        new_target.append(g)
+        new_target.append(b)
+    return new_target
 
+
+# this function returns the paths to images with similar colorscheme
 def fetch_filenames(target_colors, n=4):
+    target_colors = fix_target_colors(target_colors)
     similar_ids = find_similar_images(target_colors, n)
     connection = pymysql.connect(
         host='localhost',
@@ -83,7 +87,6 @@ def fetch_filenames(target_colors, n=4):
 
     cursor.execute(query, tuple(similar_ids))
     photo_filenames = cursor.fetchall()
-    print(photo_filenames)
     cursor.close()
     connection.close()
     image_paths = []
@@ -92,7 +95,3 @@ def fetch_filenames(target_colors, n=4):
     return image_paths
 
 
-target_colors = [255, 0, 0] * 5  # TODO: make targetcolors interface in the website
-images = fetch_filenames(target_colors, 4)
-print(images)
-# create_collage(images)

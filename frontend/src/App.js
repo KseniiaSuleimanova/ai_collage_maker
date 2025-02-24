@@ -68,24 +68,25 @@ function App() {
 
 
     const handleGetCollage = async () => {
-    //   const formData = new FormData();
-    //   formData.append('imageCount', imageCount);
-    //
-    //   try {
-    //   const response = await fetch('http://127.0.0.1:5000/create', {
-    //     method: 'POST',
-    //     body: formData
-    //   });
-    //
-    //   if (response.ok) {
-    //     alert("Collage created successfully");
-    //   } else {
-    //     alert("Collage creation failed");
-    //   }
-    // } catch (error) {
-    //   console.error('Error creating collage:', error);
-    //   alert("Collage creation failed");
-    // }
+      const formData = new FormData();
+      formData.append('imageCount', imageCount);
+      formData.append('colors', colors);
+
+      try {
+      const response = await fetch('http://127.0.0.1:5000/create', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        alert("Collage created successfully");
+      } else {
+        alert("Collage creation failed");
+      }
+    } catch (error) {
+      console.error('Error creating collage:', error);
+      alert("Collage creation failed");
+    }
 
   };
 

@@ -22,6 +22,3 @@ def collage_creation(image_paths):
             cnt += 1
 
     cv2.imwrite("collages/collage.jpg", collage)
-
-imgs = ['uploads/cuteTuring.png', 'uploads/apple jack.png', 'uploads/rainbow dash.png', 'uploads/fluttershy.jpg']
-collage_creation(imgs)
